@@ -13,4 +13,5 @@ export default styled.div`
   background-color: #fff;
   height: ${({ isDesktop }) => (isDesktop ? 37 : 84)}px;
   width: ${({ isDesktop }) => (isDesktop ? '906px' : '308px')};
+  padding-left: ${({ isDesktop }) => (isDesktop ? 0 : 10)}px;
 `;
