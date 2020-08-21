@@ -5,7 +5,7 @@ export default styled.div`
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
-  height: 745px;
+  height: 1184px;
   align-self: center;
   align-items: center;
 
