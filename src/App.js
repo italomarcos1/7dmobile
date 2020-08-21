@@ -175,7 +175,7 @@ function App() {
                 : {
                     alignItems: 'center',
                     height: 77,
-                    marginTop: 20,
+                    marginTop: 0,
                   }
             }
           >
@@ -205,7 +205,7 @@ function App() {
             <RadioBox
               setValue={() => setStation('newHythe')}
               selected={station === 'newHythe'}
-              style={{ marginLeft: 20 }}
+              style={isDesktop ? { marginLeft: 20 } : { marginLeft: 0 }}
             >
               New Hythe (ME20 7PA)
             </RadioBox>
@@ -220,7 +220,7 @@ function App() {
             <RadioBox
               setValue={() => setStation('grays')}
               selected={station === 'grays'}
-              style={{ marginLeft: 20 }}
+              style={isDesktop ? { marginLeft: 20 } : { marginLeft: 0 }}
             >
               Grays (RM20 3ED)
             </RadioBox>
@@ -235,7 +235,7 @@ function App() {
             <RadioBox
               setValue={() => setStation('wembley')}
               selected={station === 'wembley'}
-              style={{ marginLeft: 20 }}
+              style={isDesktop ? { marginLeft: 20 } : { marginLeft: 0 }}
             >
               Wembley (NW10 OUX)
             </RadioBox>
@@ -250,7 +250,7 @@ function App() {
             <RadioBox
               setValue={() => setStation('weybridge')}
               selected={station === 'weybridge'}
-              style={{ marginLeft: 20 }}
+              style={isDesktop ? { marginLeft: 20 } : { marginLeft: 0 }}
             >
               Weybridge (KT13 0YU)
             </RadioBox>
