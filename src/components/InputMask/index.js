@@ -77,7 +77,7 @@ export default function CustomInput({
         <VerifiedStatus verified={hasVerify && verified} style={{ fontSize }}>
           {hasVerify && ` ${verified ? 'Verified' : 'Unverified'}`}
         </VerifiedStatus>
-      </div>{' '}
+      </div>
       <InputMask name={name} placeholder={placeholder} mask={mask} {...rest} />
     </Container>
   );

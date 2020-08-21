@@ -36,10 +36,8 @@ export default function CustomInput({
 
   const handleDateChange = useCallback(
     (day, modifiers) => {
-      console.log('action taken');
       if (modifiers.available) {
         const dateFormatted = format(day, 'MM/dd/yyyy', { locale: en });
-        console.log(dateFormatted);
         setSelectedDate(dateFormatted);
         setValue(dateFormatted);
         setCalendarOpen('none');

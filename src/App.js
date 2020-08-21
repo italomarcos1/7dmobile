@@ -1,8 +1,7 @@
 import React, { useCallback, useState } from 'react';
 import { useMediaQuery } from 'react-responsive';
-
-import { format } from 'date-fns';
-import en from 'date-fns/locale/en-GB';
+import { toast } from 'react-toastify';
+import { isAfter, getYear, isDate, isValid, isFuture } from 'date-fns';
 
 import Container from './components/Container';
 import InputContainer from './components/InputContainer';
@@ -28,15 +27,60 @@ function App() {
   const [howLongDrivingLicence, setHowLongDrivingLicence] = useState('');
 
   const [anyUnspentConvention, setAnyUnspentConvention] = useState('no');
+  const [drivingLicenceOrigin, setDrivingLicenceOrigin] = useState('yes');
 
   const [dateOfBirth, setDateOfBirth] = useState('');
 
   const [age, setAge] = useState('');
   const [station, setStation] = useState('basildon');
 
-  const handleSubmit = useCallback(formData => {
-    console.log(formData);
-  }, []);
+  const handleSubmit = useCallback(
+    formData => {
+      const data = Object.values(formData);
+      const anyEmptyField = data.some(field => field === '');
+      if (anyEmptyField) {
+        toast.error('You must fill each field before submitting.');
+        return;
+      }
+
+      const [month, day, year] = dateOfBirth.split('/');
+      const currentYear = getYear(new Date());
+
+      if (
+        !isDate(new Date(year, month, day)) ||
+        !isValid(new Date(year, month, day)) ||
+        isFuture(new Date(year, month, day)) ||
+        (month === '02' && Number(day) > 29) ||
+        Number(month) > 12 ||
+        month === '00' ||
+        day === '00' ||
+        year === '0000' ||
+        year > currentYear - 16 ||
+        year < currentYear - 90
+      ) {
+        toast.error('You must provide a valid birthdate.');
+        return;
+      }
+
+      console.log(anyUnspentConvention);
+      if (drivingLicenceOrigin === 'yes') console.log('uk');
+      else console.log('eu');
+      console.log(anyPointsInDrivingLicence);
+      console.log(station);
+      console.log(dateOfBirth);
+      console.log(drivingLicenceOrigin);
+      console.log(howLongDrivingLicence);
+      toast.success('Thanks for submitting your application.');
+    },
+    [
+      anyPointsInDrivingLicence,
+      anyUnspentConvention,
+      drivingLicenceOrigin,
+      dateOfBirth,
+      howLongDrivingLicence,
+      station,
+    ]
+  );
 
   // useEffect(()=>{
   //   if(isDesktop){
@@ -127,10 +171,10 @@ function App() {
           <Line isDesktop={isDesktop}>
             <RadioButton
               title="Is your Driving Licence UK or EU?"
-              option={anyUnspentConvention}
+              option={drivingLicenceOrigin}
               firstOption="UK Driving Licence"
               secondOption="EU Driving Licence"
-              setOption={value => setAnyUnspentConvention(value)}
+              setOption={value => setDrivingLicenceOrigin(value)}
               style={{ width: 288 }}
               column
             />
@@ -254,6 +298,7 @@ function App() {
             }}
           >
             <SubmitButton
+              disabled
               style={
                 isDesktop
                   ? { width: 288, height: 76 }

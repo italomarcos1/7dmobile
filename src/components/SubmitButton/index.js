@@ -3,8 +3,12 @@ import PropTypes from 'prop-types';
 
 import { Container } from './styles';
 
-function SubmitButton({ style }) {
-  return <Container style={style}>Submit the Application</Container>;
+function SubmitButton({ style, ...rest }) {
+  return (
+    <Container style={style} {...rest}>
+      Submit the Application
+    </Container>
+  );
 }
 
 SubmitButton.propTypes = {
