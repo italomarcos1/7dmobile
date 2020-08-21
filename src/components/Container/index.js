@@ -7,7 +7,7 @@ export default styled(Form)`
   background-color: #fff;
   border-radius: 4px;
   width: 100%;
-  height: ${({ isDesktop }) => (isDesktop ? '100%' : '1000px')};
+  height: 100%;
   flex-direction: column;
   align-items: center;
   justify-content: space-between;

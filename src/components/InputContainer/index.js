@@ -5,16 +5,7 @@ export default styled.div`
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
-  height: 1184px;
+  height: 1656px;
   align-self: center;
   align-items: center;
-
-  div {
-    &.content {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-end;
-      margin-top: 20px;
-    }
-  }
 `;

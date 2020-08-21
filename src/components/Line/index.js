@@ -8,6 +8,6 @@ export default styled.div`
 
   flex-direction: ${({ isDesktop }) => (isDesktop ? 'row' : 'column')};
   background-color: ${({ isDesktop }) => (isDesktop ? '#fff' : '#f0f')};
-  height: ${({ isDesktop }) => (isDesktop ? 76 : 248)}px;
+  height: ${({ isDesktop }) => (isDesktop ? 74 : 262)}px;
   width: ${({ isDesktop }) => (isDesktop ? '906px' : '308px')};
 `;

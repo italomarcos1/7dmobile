@@ -46,6 +46,15 @@ function App() {
   //   }
   // },[])
 
+  // Line: 262 = 74 + 74 + 74 + 20 + 20
+  // 1048 - 4 lines
+  // Subtitle: 116
+  // 1164 - lines + subtitle
+  // RadioBoxLine: 376 = 94 + 94 + 94 + 94
+  // SubmitButton: 116
+
+  // Total: 1656
+
   return (
     <>
       <Header />
