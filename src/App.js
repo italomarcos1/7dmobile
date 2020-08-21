@@ -257,8 +257,9 @@ function App() {
           </RadioBoxLine>
         </InputContainer>
         <Line
-          isDesktop={isDesktop}
           style={{
+            width: '100%',
+            height: 76,
             alignItems: 'flex-start',
             marginTop: 40,
           }}
