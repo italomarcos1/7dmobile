@@ -180,7 +180,7 @@ function App() {
                   }
             }
           >
-            <Subtitle>
+            <Subtitle isDesktop={isDesktop}>
               Select your nearest preferred delivery station at your choice in
               the map below, please note that the interview may be in a
               different location due to availability.

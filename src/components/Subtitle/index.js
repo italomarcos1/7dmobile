@@ -7,4 +7,5 @@ export default styled.div`
   font-size: 13px 'Roboto';
   letter-spacing: 0.28px;
   color: #aaa;
+  background-color: #aff;
 `;
