@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import { useMediaQuery } from 'react-responsive';
 
 import { format } from 'date-fns';
@@ -35,7 +35,6 @@ function App() {
     format(new Date(), 'MM/dd/yyyy', { locale: en })
   );
 
-  const [calendarOpen, setCalendarOpen] = useState('none');
   const [age, setAge] = useState('');
   const [station, setStation] = useState('basildon');
 
@@ -69,23 +68,15 @@ function App() {
             <Input name="surname" title="Surname" />
           </Line>
           <Line isDesktop={isDesktop}>
-            <Input name="email" title="Email" hasVerify verified />
-            <InputMask
-              title="Mobile Number"
-              name="mobile"
-              type="phone"
-              hasVerify
-              verified
-            />
+            <Input name="email" title="Email" />
+            <InputMask title="Mobile Number" name="mobile" type="phone" />
             <DualInputContainer>
-              <Input
+              <InputMask
                 title="Date of Birth"
                 name="dateOfBirth"
-                type="date"
                 value={dateOfBirth}
-                setValue={value => setDateOfBirth(value)}
-                calendarOpen={calendarOpen}
-                setCalendarOpen={value => setCalendarOpen(value)}
+                placeholder="00/00/0000"
+                onChange={e => setDateOfBirth(e.target.value)}
                 style={{ width: 134 }}
               />
               <InputMask
@@ -147,14 +138,12 @@ function App() {
               style={{ width: 288 }}
               column
             />
-            <Input
+            <InputMask
               title="How Long you had your Driving Licence for?"
               name="howLongDrivingLicence"
-              type="date"
+              placeholder="00/00/0000"
               value={howLongDrivingLicence}
-              setValue={value => setHowLongDrivingLicence(value)}
-              calendarOpen={calendarOpen}
-              setCalendarOpen={value => setCalendarOpen(value)}
+              onChange={e => setHowLongDrivingLicence(e.target.value)}
             />
             <RadioButton
               title="Any points in your Driving Licence?"

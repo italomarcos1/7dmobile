@@ -17,8 +17,8 @@ export const Container = styled.div`
 `;
 
 export const Button = styled.div`
-  width: 20px;
-  height: 20px;
+  width: 14px;
+  height: 14px;
   border: 1px solid #333;
   border-radius: 50%;
   display: flex;
@@ -30,10 +30,10 @@ export const Button = styled.div`
   }
 
   span {
-    width: 10px;
-    height: 10px;
+    width: 14px;
+    height: 14px;
 
-    background-color: #13383c;
+    background-color: #5bc24c;
     border-radius: 50%;
   }
 `;
