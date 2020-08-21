@@ -114,14 +114,14 @@ function App() {
               <div>
                 <span>
                   <CustomRadioButton
-                    selected={anyUnspentConvention}
+                    selected={anyUnspentConvention === 'yes'}
                     onClick={() => setAnyUnspentConvention('yes')}
                   />
                   Yes
                 </span>
                 <span>
                   <CustomRadioButton
-                    selected={anyUnspentConvention}
+                    selected={anyUnspentConvention === 'no'}
                     onClick={() => setAnyUnspentConvention('no')}
                     style={{ marginLeft: 20 }}
                   />
