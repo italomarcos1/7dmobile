@@ -8,4 +8,5 @@ export default styled.div`
   height: 1656px;
   align-self: center;
   align-items: center;
+  background-color: ${({ isDesktop }) => (isDesktop ? '#fff' : '#0f0')};
 `;
