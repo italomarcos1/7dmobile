@@ -98,7 +98,9 @@ function App() {
             </DualInputContainer>
           </Line>
           <Line isDesktop={isDesktop}>
-            <RadioButtonContainer style={{ width: 596 }}>
+            <RadioButtonContainer
+              style={isDesktop ? { width: 596 } : { width: '100%' }}
+            >
               <small>
                 Do you have any unspent conviction that may show up when we
                 apply for Criminal Records?
