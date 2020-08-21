@@ -174,7 +174,7 @@ function App() {
                   }
                 : {
                     alignItems: 'center',
-                    height: 57,
+                    height: 77,
                     marginTop: 20,
                   }
             }
