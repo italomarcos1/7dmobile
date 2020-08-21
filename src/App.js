@@ -146,7 +146,7 @@ function App() {
             >
               Select your nearest preferred delivery station at your choice in
               the map below, please note that the interview may be in a
-              different location due to availability.
+              different location due to availability
             </small>
           </Line>
 
