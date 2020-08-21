@@ -1,7 +1,8 @@
 import styled from 'styled-components';
 
 export default styled.div`
-  width: 996px;
+  width: ${({ isDesktop }) => (isDesktop ? '996px' : '100%')};
+
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
