@@ -25,15 +25,11 @@ function App() {
   const [anyPointsInDrivingLicence, setAnyPointsInDrivingLicence] = useState(
     'no'
   );
-  const [howLongDrivingLicence, setHowLongDrivingLicence] = useState(() =>
-    format(new Date(), 'MM/dd/yyyy', { locale: en })
-  );
+  const [howLongDrivingLicence, setHowLongDrivingLicence] = useState('');
 
   const [anyUnspentConvention, setAnyUnspentConvention] = useState('no');
 
-  const [dateOfBirth, setDateOfBirth] = useState(() =>
-    format(new Date(), 'MM/dd/yyyy', { locale: en })
-  );
+  const [dateOfBirth, setDateOfBirth] = useState('');
 
   const [age, setAge] = useState('');
   const [station, setStation] = useState('basildon');
