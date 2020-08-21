@@ -97,7 +97,10 @@ function App() {
               />
             </DualInputContainer>
           </Line>
-          <Line isDesktop={isDesktop}>
+          <Line
+            isDesktop={isDesktop}
+            style={isDesktop ? { height: 74 } : { height: 168 }}
+          >
             <RadioButtonContainer
               style={isDesktop ? { width: 596 } : { width: '100%' }}
             >
@@ -117,6 +120,7 @@ function App() {
                   <CustomRadioButton
                     selected={anyUnspentConvention}
                     onClick={() => setAnyUnspentConvention('no')}
+                    style={{ marginLeft: 20 }}
                   />
                   No
                 </span>
