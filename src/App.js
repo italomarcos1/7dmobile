@@ -99,10 +99,12 @@ function App() {
           </Line>
           <Line
             isDesktop={isDesktop}
-            style={isDesktop ? { height: 74 } : { height: 168 }}
+            style={isDesktop ? { height: 74 } : { height: 188 }}
           >
             <RadioButtonContainer
-              style={isDesktop ? { width: 596 } : { width: '100%' }}
+              style={
+                isDesktop ? { width: 596 } : { width: '100%', paddingLeft: 5 }
+              }
             >
               <small>
                 Do you have any unspent conviction that may show up when we
