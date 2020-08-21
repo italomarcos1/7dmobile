@@ -255,16 +255,16 @@ function App() {
               Weybridge (KT13 0YU)
             </RadioBox>
           </RadioBoxLine>
-          <Line
-            isDesktop={isDesktop}
-            style={{
-              alignItems: 'flex-start',
-              marginTop: 40,
-            }}
-          >
-            <SubmitButton style={{ width: 288, height: 76 }} />
-          </Line>
         </InputContainer>
+        <Line
+          isDesktop={isDesktop}
+          style={{
+            alignItems: 'flex-start',
+            marginTop: 40,
+          }}
+        >
+          <SubmitButton style={{ width: 288, height: 76 }} />
+        </Line>
       </Container>
     </>
   );

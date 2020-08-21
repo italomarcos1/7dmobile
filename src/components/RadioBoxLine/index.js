@@ -10,6 +10,6 @@ export default styled.div`
 
   flex-direction: ${({ isDesktop }) => (isDesktop ? 'row' : 'column')};
   background-color: ${({ isDesktop }) => (isDesktop ? '#fff' : '#00f')};
-  height: ${({ isDesktop }) => (isDesktop ? 37 : 94)}px;
+  height: ${({ isDesktop }) => (isDesktop ? 37 : 84)}px;
   width: ${({ isDesktop }) => (isDesktop ? '906px' : '308px')};
 `;
