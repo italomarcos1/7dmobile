@@ -14,6 +14,8 @@ import RadioBoxLine from './components/RadioBoxLine';
 import InputMask from './components/InputMask';
 import SubmitButton from './components/SubmitButton';
 import RadioButton from './components/CustomRadioButton';
+import RadioButtonContainer from './components/GreenRadioButtonContainer';
+import CustomRadioButton from './components/GreenRadioButton';
 import RadioBox from './components/RadioBox';
 
 function App() {
@@ -96,12 +98,29 @@ function App() {
             </DualInputContainer>
           </Line>
           <Line isDesktop={isDesktop}>
-            <RadioButton
-              title="Do you have any unspent conviction that may show up when we apply for Criminal Records?"
-              option={anyUnspentConvention}
-              setOption={value => setAnyUnspentConvention(value)}
-              style={{ width: 596 }}
-            />
+            <RadioButtonContainer style={{ width: 596 }}>
+              <small>
+                Do you have any unspent conviction that may show up when we
+                apply for Criminal Records?
+              </small>
+              <div>
+                <span>
+                  <CustomRadioButton
+                    selected={anyUnspentConvention}
+                    onClick={() => setAnyUnspentConvention('yes')}
+                  />
+                  Yes
+                </span>
+                <span>
+                  <CustomRadioButton
+                    selected={anyUnspentConvention}
+                    onClick={() => setAnyUnspentConvention('no')}
+                  />
+                  No
+                </span>
+              </div>
+            </RadioButtonContainer>
+
             <InputMask
               title="Enter your postcode"
               name="postcode"
