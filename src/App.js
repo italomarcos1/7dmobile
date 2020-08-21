@@ -263,7 +263,13 @@ function App() {
             marginTop: 40,
           }}
         >
-          <SubmitButton style={{ width: 288, height: 76 }} />
+          <SubmitButton
+            style={
+              isDesktop
+                ? { width: 288, height: 76 }
+                : { width: '100%', height: 76 }
+            }
+          />
         </Line>
       </Container>
     </>
