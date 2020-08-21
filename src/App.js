@@ -10,6 +10,7 @@ import DualInputContainer from './components/DualInputContainer';
 import Header from './components/Header';
 import Input from './components/Input';
 import Line from './components/Line';
+import RadioBoxLine from './components/RadioBoxLine';
 import InputMask from './components/InputMask';
 import SubmitButton from './components/SubmitButton';
 import RadioButton from './components/CustomRadioButton';
@@ -150,14 +151,7 @@ function App() {
             </small>
           </Line>
 
-          <Line
-            isDesktop={isDesktop}
-            style={{
-              justifyContent: 'flex-start',
-              height: 37,
-              marginTop: 5,
-            }}
-          >
+          <RadioBoxLine isDesktop={isDesktop}>
             <RadioBox
               setValue={() => setStation('basildon')}
               selected={station === 'basildon'}
@@ -171,15 +165,8 @@ function App() {
             >
               New Hythe (ME20 7PA)
             </RadioBox>
-          </Line>
-          <Line
-            isDesktop={isDesktop}
-            style={{
-              justifyContent: 'flex-start',
-              height: 37,
-              marginTop: 5,
-            }}
-          >
+          </RadioBoxLine>
+          <RadioBoxLine isDesktop={isDesktop}>
             <RadioBox
               setValue={() => setStation('croydon')}
               selected={station === 'croydon'}
@@ -193,15 +180,8 @@ function App() {
             >
               Grays (RM20 3ED)
             </RadioBox>
-          </Line>
-          <Line
-            isDesktop={isDesktop}
-            style={{
-              justifyContent: 'flex-start',
-              height: 37,
-              marginTop: 5,
-            }}
-          >
+          </RadioBoxLine>
+          <RadioBoxLine isDesktop={isDesktop}>
             <RadioBox
               setValue={() => setStation('croydon2')}
               selected={station === 'croydon2'}
@@ -215,15 +195,8 @@ function App() {
             >
               Wembley (NW10 OUX)
             </RadioBox>
-          </Line>
-          <Line
-            isDesktop={isDesktop}
-            style={{
-              justifyContent: 'flex-start',
-              height: 37,
-              marginTop: 5,
-            }}
-          >
+          </RadioBoxLine>
+          <RadioBoxLine isDesktop={isDesktop}>
             <RadioBox
               setValue={() => setStation('belvedere')}
               selected={station === 'belvedere'}
@@ -237,7 +210,7 @@ function App() {
             >
               Weybridge (KT13 0YU)
             </RadioBox>
-          </Line>
+          </RadioBoxLine>
           <Line
             isDesktop={isDesktop}
             style={{
