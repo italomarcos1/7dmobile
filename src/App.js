@@ -17,6 +17,7 @@ import RadioButton from './components/CustomRadioButton';
 import RadioButtonContainer from './components/GreenRadioButtonContainer';
 import CustomRadioButton from './components/GreenRadioButton';
 import RadioBox from './components/RadioBox';
+import Subtitle from './components/Subtitle';
 
 function App() {
   const isDesktop = useMediaQuery({ query: '(min-device-width: 900px)' });
@@ -179,20 +180,11 @@ function App() {
                   }
             }
           >
-            <small
-              style={{
-                textAlign: 'left',
-                padding: 0,
-                fontSize: 13,
-                fontFamily: 'Roboto',
-                letterSpacing: 0.28,
-                color: '#aaa',
-              }}
-            >
+            <Subtitle>
               Select your nearest preferred delivery station at your choice in
               the map below, please note that the interview may be in a
               different location due to availability.
-            </small>
+            </Subtitle>
           </Line>
 
           <RadioBoxLine isDesktop={isDesktop}>
