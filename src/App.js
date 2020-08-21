@@ -71,7 +71,7 @@ function App() {
                 title="Date of Birth"
                 name="dateOfBirth"
                 value={dateOfBirth}
-                placeholder="00/00/0000"
+                placeholder="MM/DD/YYYY"
                 onChange={e => setDateOfBirth(e.target.value)}
                 style={{ width: 134 }}
               />
@@ -137,7 +137,7 @@ function App() {
             <InputMask
               title="How Long you had your Driving Licence for?"
               name="howLongDrivingLicence"
-              placeholder="00/00/0000"
+              placeholder="MM/DD/YYYY"
               value={howLongDrivingLicence}
               onChange={e => setHowLongDrivingLicence(e.target.value)}
             />
