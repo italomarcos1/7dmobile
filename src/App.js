@@ -58,7 +58,7 @@ function App() {
   return (
     <>
       <Header />
-      <Container onSubmit={handleSubmit}>
+      <Container onSubmit={handleSubmit} isDesktop={isDesktop}>
         <InputContainer>
           <Line style={{ marginTop: 0 }} isDesktop={isDesktop}>
             <Input name="forename" title="Forename" />
