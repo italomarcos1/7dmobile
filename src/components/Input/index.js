@@ -34,16 +34,20 @@ export default function CustomInput({
     format(new Date(), 'MM/dd/yyyy', { locale: en })
   );
 
-  const handleDateChange = useCallback((day, modifiers) => {
-    console.log('action taken');
-    if (modifiers.available) {
-      const dateFormatted = format(day, 'MM/dd/yyyy', { locale: en });
-      console.log(dateFormatted);
-      setSelectedDate(dateFormatted);
-      setValue(dateFormatted);
-      setCalendarOpen('none');
-    }
-  }, []);
+  const handleDateChange = useCallback(
+    (day, modifiers) => {
+      console.log('action taken');
+      if (modifiers.available) {
+        const dateFormatted = format(day, 'MM/dd/yyyy', { locale: en });
+        console.log(dateFormatted);
+        setSelectedDate(dateFormatted);
+        setValue(dateFormatted);
+        setCalendarOpen('none');
+      }
+    },
+    [setCalendarOpen, setValue]
+  );
+
   return (
     <Container full={full} style={style}>
       <div>

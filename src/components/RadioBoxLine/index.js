@@ -9,7 +9,8 @@ export default styled.div`
   margin-top: 5px;
 
   flex-direction: ${({ isDesktop }) => (isDesktop ? 'row' : 'column')};
-  background-color: ${({ isDesktop }) => (isDesktop ? '#fff' : '#00f')};
+  /* background-color: ${({ isDesktop }) => (isDesktop ? '#fff' : '#00f')}; */
+  background-color: #fff;
   height: ${({ isDesktop }) => (isDesktop ? 37 : 84)}px;
   width: ${({ isDesktop }) => (isDesktop ? '906px' : '308px')};
 `;
