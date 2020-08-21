@@ -103,7 +103,7 @@ function App() {
           >
             <RadioButtonContainer
               style={
-                isDesktop ? { width: 596 } : { width: '100%', paddingLeft: 5 }
+                isDesktop ? { width: 596 } : { width: '100%', paddingLeft: 10 }
               }
             >
               <small>
@@ -165,11 +165,19 @@ function App() {
 
           <Line
             isDesktop={isDesktop}
-            style={{
-              alignItems: 'center',
-              height: 57,
-              marginTop: 40,
-            }}
+            style={
+              isDesktop
+                ? {
+                    alignItems: 'center',
+                    height: 57,
+                    marginTop: 40,
+                  }
+                : {
+                    alignItems: 'center',
+                    height: 57,
+                    marginTop: 20,
+                  }
+            }
           >
             <small
               style={{
