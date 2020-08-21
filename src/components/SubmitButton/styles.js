@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+import { darken } from 'polished';
 
 export const Container = styled.button.attrs({ type: 'submit' })`
   display: flex;
@@ -14,4 +15,9 @@ export const Container = styled.button.attrs({ type: 'submit' })`
   font: bold 16px 'Roboto';
   color: #fff;
   text-transform: uppercase;
+  transition: background-color 0.2s;
+
+  &:hover {
+    background-color: ${darken(0.07, '#24b456')};
+  }
 `;
