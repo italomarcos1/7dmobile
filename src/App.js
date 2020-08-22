@@ -1,19 +1,7 @@
 import React, { useCallback, useState } from 'react';
 import { useMediaQuery } from 'react-responsive';
 import { toast } from 'react-toastify';
-import {
-  isAfter,
-  getYear,
-  getMonth,
-  fromUnixTime,
-  isDate,
-  isValid,
-  isFuture,
-  isExists,
-  toDate,
-  parseISO,
-  formatDistanceStrict,
-} from 'date-fns';
+import { getMonth, getYear, isExists, formatDistanceStrict } from 'date-fns';
 
 import Container from './components/Container';
 import InputContainer from './components/InputContainer';
@@ -42,9 +30,21 @@ function App() {
   const [drivingLicenceOrigin, setDrivingLicenceOrigin] = useState('yes');
 
   const [dateOfBirth, setDateOfBirth] = useState('');
+  const [postcode, setPostcode] = useState('');
 
   const [age, setAge] = useState('');
   const [station, setStation] = useState('basildon');
+
+  const [invalidFields, setInvalidFields] = useState([
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+  ]);
 
   const dateIsValid = useCallback(date => {
     const [month, day, year] = date.split('/');
@@ -52,39 +52,30 @@ function App() {
     const formattedMonth = Number(month) - 1;
     const formattedDay = Number(day);
     const formattedYear = Number(year);
+    const currentYear = getYear(new Date());
 
-    return isExists(formattedYear, formattedMonth, formattedDay);
+    return (
+      isExists(formattedYear, formattedMonth, formattedDay) &&
+      currentYear > formattedYear
+    );
   }, []);
 
   const handleSubmit = useCallback(
     formData => {
       const data = Object.values(formData);
+      console.log(data);
       const anyEmptyField = data.some(field => field === '');
-      if (anyEmptyField) {
-        toast.error('You must fill each field before submitting.');
-        return;
+      // const anyEmptyField = data.findIndex(field => field === '');
+      // console.log(anyEmptyField);
+      if (anyEmptyField !== -1) {
+        setInvalidFields(data.map(element => element === ''));
+        console.log('cool');
       }
+      // if (anyEmptyField) {
+      //   toast.error('You must fill each field before submitting.');
+      //   return;
+      // }
 
-      // const currentYear = getYear(new Date());
-
-      // (month === '02' && Number(day) > 29) ||
-      // Number(month) > 12 ||
-      // month === '00' ||
-      // day === '00' ||
-      // year === '0000' ||
-      // year > currentYear - 16 ||
-      // year < currentYear - 90
-
-      // console.log('w/o toDate');
-      // console.log(isValid(new Date(1999, 13, 31)));
-      // console.log(isValid(new Date(1999, 11, 31)));
-      // console.log('w toDate');
-      // console.log(isValid(toDate(new Date(1999, 13, 31))));
-      // console.log(isValid(toDate(new Date(1999, 11, 31))));
-      // console.log('dot');
-      // console.log(isExists(1999, 13, 31));
-      // console.log(isExists(1999, 11, 31));
-      console.log(dateOfBirth);
       if (!dateIsValid(dateOfBirth)) {
         toast.error('You must provide a valid Birthdate.');
         return;
@@ -94,15 +85,6 @@ function App() {
         toast.error("Your Driving Licence's date is invalid.");
         return;
       }
-
-      // if (
-      //   !isDate(new Date(year, month, day)) ||
-      //   !isValid(new Date(year, month, day)) ||
-      //   isFuture(new Date(year, month, day))
-      // ) {
-      //   toast.error('You must provide a valid birthdate.');
-      //   return;
-      // }
 
       console.log(anyUnspentConvention);
       if (drivingLicenceOrigin === 'yes') console.log('uk');
@@ -124,8 +106,6 @@ function App() {
       dateIsValid,
     ]
   );
-  // console.log(isAfter(new Date(), new Date(2003, 14, 11)));
-  // console.log(isFuture(new Date(2100, 11, 31)));
 
   const calculateAge = useCallback(() => {
     if (!dateIsValid(dateOfBirth)) {
@@ -142,24 +122,14 @@ function App() {
     const formattedDay = Number(day); // casting para numero, pois o dia vem como uma string
     const formattedMonth = Number(month); // casting para numero, pois o mês vem como uma string
 
-    console.log(formattedMonth);
-    console.log(formattedDay);
-    console.log(formattedCurrentMonth);
-    console.log(currentDay);
-
     const currentAge = formatDistanceStrict(
       Date.now(),
       new Date(year, month, day)
-    );
-    console.log(`${currentDay} of ${formattedCurrentMonth}`);
+    ); // calculando a idade, comparando a data informada com o dia atual
 
     const [formattedAge] = currentAge.split(' ');
 
-    console.log(formattedCurrentMonth);
-    console.log(formattedMonth);
-    console.log(currentDay);
-    console.log(formattedDay);
-
+    // se o mês informado for maior que o mês atual, ou for o mesmo mês mas com dia maior, o usuário não fez aniversario ainda
     if (
       (currentDay < formattedDay && formattedMonth === formattedCurrentMonth) ||
       formattedMonth > formattedCurrentMonth
@@ -169,11 +139,6 @@ function App() {
       setAge(formattedAge);
     }
   }, [dateOfBirth, dateIsValid]);
-  // useEffect(()=>{
-  //   if(isDesktop){
-
-  //   }
-  // },[])
 
   // Line: 262 = 74 + 74 + 74 + 20 + 20
   // 1048 - 4 lines
@@ -190,13 +155,22 @@ function App() {
       <Container onSubmit={handleSubmit} isDesktop={isDesktop}>
         <InputContainer>
           <Line style={{ marginTop: 0 }} isDesktop={isDesktop}>
-            <Input name="forename" title="Forename" />
-            <Input name="middlename" title="Middle Name" />
-            <Input name="surname" title="Surname" />
+            <Input name="forename" title="Forename" error={invalidFields[0]} />
+            <Input
+              name="middlename"
+              title="Middle Name"
+              error={invalidFields[1]}
+            />
+            <Input name="surname" title="Surname" error={invalidFields[2]} />
           </Line>
           <Line isDesktop={isDesktop}>
-            <Input name="email" title="Email" />
-            <InputMask title="Mobile Number" name="mobile" type="phone" />
+            <Input name="email" title="Email" error={invalidFields[3]} />
+            <InputMask
+              title="Mobile Number"
+              name="mobile"
+              type="phone"
+              error={invalidFields[4]}
+            />
             <DualInputContainer>
               <InputMask
                 title="Date of Birth"
@@ -205,6 +179,7 @@ function App() {
                 placeholder="MM/DD/YYYY"
                 onChange={e => setDateOfBirth(e.target.value)}
                 onBlur={calculateAge}
+                error={invalidFields[5]}
                 style={{ width: 134 }}
               />
               <InputMask
@@ -255,6 +230,9 @@ function App() {
               name="postcode"
               mask="a99 9aa"
               placeholder="B11 3RP"
+              value={postcode}
+              onChange={e => setPostcode(e.target.value)}
+              error={invalidFields[6]}
             />
           </Line>
           <Line isDesktop={isDesktop}>
@@ -273,6 +251,7 @@ function App() {
               placeholder="MM/DD/YYYY"
               value={howLongDrivingLicence}
               onChange={e => setHowLongDrivingLicence(e.target.value)}
+              error={invalidFields[7]}
             />
             <RadioButton
               title="Any points in your Driving Licence?"

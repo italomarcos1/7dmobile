@@ -9,15 +9,17 @@ export const Container = styled.div`
     width: 100%;
     height: 50px;
     margin-top: 7px;
+    border-style: solid;
     background-color: #fff;
-    border: 1px solid #aaa;
+    border-color: ${({ error }) => (error ? '#f53030' : '#aaa')};
+    border-width: ${({ error }) => (error ? 2 : 1)}px;
     border-radius: 4px;
     padding: 15px 20px;
 
     color: #666;
 
     &::placeholder {
-      color: #666;
+      color: ${({ error }) => (error ? '#f53030' : '#aaa')};
     }
   }
 `;
@@ -26,7 +28,7 @@ export const Title = styled.small`
   text-align: left;
   font: 14px 'Roboto';
   letter-spacing: 0.28px;
-  color: #aaa;
+  color: ${({ error }) => (error ? '#f53030' : '#aaa')};
 `;
 
 export const VerifiedStatus = styled.small`

@@ -13,6 +13,7 @@ export default function CustomInput({
   fontSize,
   hasVerify,
   verified,
+  error,
   ...rest
 }) {
   const [mask, setMask] = useState('');
@@ -71,9 +72,11 @@ export default function CustomInput({
   }, [type]);
 
   return (
-    <Container full={full} style={style}>
+    <Container full={full} style={style} error={error}>
       <div>
-        <Title style={{ fontSize }}>{title}</Title>
+        <Title style={{ fontSize }} error={error}>
+          {title}
+        </Title>
         <VerifiedStatus verified={hasVerify && verified} style={{ fontSize }}>
           {hasVerify && ` ${verified ? 'Verified' : 'Unverified'}`}
         </VerifiedStatus>
@@ -91,6 +94,7 @@ CustomInput.propTypes = {
   full: PropTypes.bool,
   hasVerify: PropTypes.bool,
   verified: PropTypes.bool,
+  error: PropTypes.bool.isRequired,
   style: PropTypes.oneOfType([PropTypes.object]),
 };
 
