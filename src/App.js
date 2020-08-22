@@ -1,7 +1,19 @@
 import React, { useCallback, useState } from 'react';
 import { useMediaQuery } from 'react-responsive';
 import { toast } from 'react-toastify';
-import { isAfter, getYear, isDate, isValid, isFuture } from 'date-fns';
+import {
+  isAfter,
+  getYear,
+  getMonth,
+  fromUnixTime,
+  isDate,
+  isValid,
+  isFuture,
+  isExists,
+  toDate,
+  parseISO,
+  formatDistanceStrict,
+} from 'date-fns';
 
 import Container from './components/Container';
 import InputContainer from './components/InputContainer';
@@ -34,6 +46,16 @@ function App() {
   const [age, setAge] = useState('');
   const [station, setStation] = useState('basildon');
 
+  const dateIsValid = useCallback(date => {
+    const [month, day, year] = date.split('/');
+
+    const formattedMonth = Number(month) - 1;
+    const formattedDay = Number(day);
+    const formattedYear = Number(year);
+
+    return isExists(formattedYear, formattedMonth, formattedDay);
+  }, []);
+
   const handleSubmit = useCallback(
     formData => {
       const data = Object.values(formData);
@@ -43,24 +65,44 @@ function App() {
         return;
       }
 
-      const [month, day, year] = dateOfBirth.split('/');
-      const currentYear = getYear(new Date());
+      // const currentYear = getYear(new Date());
 
-      if (
-        !isDate(new Date(year, month, day)) ||
-        !isValid(new Date(year, month, day)) ||
-        isFuture(new Date(year, month, day)) ||
-        (month === '02' && Number(day) > 29) ||
-        Number(month) > 12 ||
-        month === '00' ||
-        day === '00' ||
-        year === '0000' ||
-        year > currentYear - 16 ||
-        year < currentYear - 90
-      ) {
-        toast.error('You must provide a valid birthdate.');
+      // (month === '02' && Number(day) > 29) ||
+      // Number(month) > 12 ||
+      // month === '00' ||
+      // day === '00' ||
+      // year === '0000' ||
+      // year > currentYear - 16 ||
+      // year < currentYear - 90
+
+      // console.log('w/o toDate');
+      // console.log(isValid(new Date(1999, 13, 31)));
+      // console.log(isValid(new Date(1999, 11, 31)));
+      // console.log('w toDate');
+      // console.log(isValid(toDate(new Date(1999, 13, 31))));
+      // console.log(isValid(toDate(new Date(1999, 11, 31))));
+      // console.log('dot');
+      // console.log(isExists(1999, 13, 31));
+      // console.log(isExists(1999, 11, 31));
+      console.log(dateOfBirth);
+      if (!dateIsValid(dateOfBirth)) {
+        toast.error('You must provide a valid Birthdate.');
         return;
       }
+
+      if (!dateIsValid(howLongDrivingLicence)) {
+        toast.error("Your Driving Licence's date is invalid.");
+        return;
+      }
+
+      // if (
+      //   !isDate(new Date(year, month, day)) ||
+      //   !isValid(new Date(year, month, day)) ||
+      //   isFuture(new Date(year, month, day))
+      // ) {
+      //   toast.error('You must provide a valid birthdate.');
+      //   return;
+      // }
 
       console.log(anyUnspentConvention);
       if (drivingLicenceOrigin === 'yes') console.log('uk');
@@ -79,9 +121,54 @@ function App() {
       dateOfBirth,
       howLongDrivingLicence,
       station,
+      dateIsValid,
     ]
   );
+  // console.log(isAfter(new Date(), new Date(2003, 14, 11)));
+  // console.log(isFuture(new Date(2100, 11, 31)));
 
+  const calculateAge = useCallback(() => {
+    if (!dateIsValid(dateOfBirth)) {
+      return;
+    }
+
+    const [month, day, year] = dateOfBirth.split('/'); // captura dia, mês e ano da data informada e salva em variáveis separadas
+    const today = new Date().toString(); // captura a data atual e armazena como string
+    const currentDate = today.split(' '); // separa cada campo da data (dia, mês) em um array
+    const currentDay = currentDate[2]; // a data vem em um array e o dia eh o terceiro elemento do array. capturamos o dia
+    const currentMonth = getMonth(new Date()); // pega o mês da data atual
+    const formattedCurrentMonth = currentMonth + 1; // o date-fns diminui 1 numero do valor
+
+    const formattedDay = Number(day); // casting para numero, pois o dia vem como uma string
+    const formattedMonth = Number(month); // casting para numero, pois o mês vem como uma string
+
+    console.log(formattedMonth);
+    console.log(formattedDay);
+    console.log(formattedCurrentMonth);
+    console.log(currentDay);
+
+    const currentAge = formatDistanceStrict(
+      Date.now(),
+      new Date(year, month, day)
+    );
+    console.log(`${currentDay} of ${formattedCurrentMonth}`);
+
+    const [formattedAge] = currentAge.split(' ');
+
+    console.log(formattedCurrentMonth);
+    console.log(formattedMonth);
+    console.log(currentDay);
+    console.log(formattedDay);
+
+    if (
+      (currentDay < formattedDay && formattedMonth === formattedCurrentMonth) ||
+      formattedMonth > formattedCurrentMonth
+    ) {
+      setAge(formattedAge - 1);
+    } else {
+      setAge(formattedAge);
+    }
+  }, [dateOfBirth, dateIsValid]);
   // useEffect(()=>{
   //   if(isDesktop){
 
@@ -117,6 +204,7 @@ function App() {
                 value={dateOfBirth}
                 placeholder="MM/DD/YYYY"
                 onChange={e => setDateOfBirth(e.target.value)}
+                onBlur={calculateAge}
                 style={{ width: 134 }}
               />
               <InputMask
@@ -125,6 +213,7 @@ function App() {
                 type="code"
                 onChange={e => setAge(e.target.value)}
                 value={age}
+                disabled
                 style={{ width: 134 }}
               />
             </DualInputContainer>
