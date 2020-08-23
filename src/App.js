@@ -133,24 +133,6 @@ function App() {
         setInvalidEmail(true);
         return;
       }
-
-      if (!dateIsValid(dateOfBirth)) {
-        toast.error('You must provide a valid Birthdate.');
-        setInvalidBirthDate(true);
-        return;
-      }
-
-      if (!dateIsValid(howLongDrivingLicence)) {
-        toast.error("Your Driving Licence's date is invalid.");
-        setInvalidDrivingLicenceDate(true);
-        return;
-      }
-
-      if (!(await postcodeValidation.isValid({ postcode }))) {
-        toast.error('You must provide a valid postcode.');
-        return;
-      }
-
       if (
         !(await mobileValidation.isValid({
           mobile: data[4],
@@ -160,6 +142,24 @@ function App() {
         toast.error('You must provide a valid mobile number.');
         return;
       }
+
+      if (!dateIsValid(dateOfBirth)) {
+        toast.error('You must provide a valid Birthdate.');
+        setInvalidBirthDate(true);
+        return;
+      }
+
+      if (!(await postcodeValidation.isValid({ postcode }))) {
+        toast.error('You must provide a valid postcode.');
+        return;
+      }
+
+      if (!dateIsValid(howLongDrivingLicence)) {
+        toast.error("Your Driving Licence's date is invalid.");
+        setInvalidDrivingLicenceDate(true);
+        return;
+      }
+
       console.log(forename);
       console.log(middlename);
       console.log(surname);
@@ -438,7 +438,6 @@ function App() {
             isDesktop={isDesktop}
             style={{
               alignItems: 'flex-start',
-              backgroundColor: '#0ff',
               height: 74,
             }}
           >
