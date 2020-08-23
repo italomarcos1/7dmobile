@@ -2,6 +2,8 @@ import React, { useCallback, useState } from 'react';
 import { useMediaQuery } from 'react-responsive';
 import { toast } from 'react-toastify';
 import { getMonth, getYear, isExists, formatDistanceStrict } from 'date-fns';
+import * as Yup from 'yup';
+import Recaptcha from 'react-recaptcha';
 
 import Container from './components/Container';
 import InputContainer from './components/InputContainer';
@@ -34,6 +36,13 @@ function App() {
 
   const [age, setAge] = useState('');
   const [station, setStation] = useState('basildon');
+  const [invalidBirthDate, setInvalidBirthDate] = useState(false);
+  const [invalidDrivingLicenceDate, setInvalidDrivingLicenceDate] = useState(
+    false
+  );
+  const [invalidEmail, setInvalidEmail] = useState(false);
+  const [invalidPostcode, setInvalidPostcode] = useState(false);
+  const [invalidMobile, setInvalidMobile] = useState(false);
 
   const [invalidFields, setInvalidFields] = useState([
     false,
@@ -45,6 +54,8 @@ function App() {
     false,
     false,
   ]);
+
+  const [canSubmit, setCanSubmit] = useState('');
 
   const dateIsValid = useCallback(date => {
     const [month, day, year] = date.split('/');
@@ -60,40 +71,109 @@ function App() {
     );
   }, []);
 
+  const postcodeValidation = Yup.object().shape({
+    postcode: Yup.string()
+      .matches(/^[a-zA-Z][0-9][0-9]\s[0-9][a-zA-Z][a-zA-Z]$/)
+      .required(),
+  });
+  const mobileValidation = Yup.object().shape({
+    mobile: Yup.string()
+      .matches(/^[0-9][0-9][0-9][0-9][0-9]\s[0-9][0-9][0-9][0-9][0-9][0-9]$/)
+      .required(),
+  });
+
+  const emailValidation = Yup.object().shape({
+    email: Yup.string().required().email(),
+  });
+
+  const verifyCallback = useCallback(response => {
+    if (response) setCanSubmit(true);
+  }, []);
+
   const handleSubmit = useCallback(
-    formData => {
+    async formData => {
       const data = Object.values(formData);
-      console.log(data);
+      data.splice(6, 1);
+      invalidFields.fill(false);
+      setInvalidEmail(false);
+      setInvalidMobile(false);
+      setInvalidPostcode(false);
+      setInvalidBirthDate(false);
+      setInvalidDrivingLicenceDate(false);
       const anyEmptyField = data.some(field => field === '');
-      // const anyEmptyField = data.findIndex(field => field === '');
-      // console.log(anyEmptyField);
-      if (anyEmptyField !== -1) {
+
+      if (anyEmptyField) {
         setInvalidFields(data.map(element => element === ''));
-        console.log('cool');
+        if (!dateIsValid(dateOfBirth)) setInvalidBirthDate(true);
+        if (!dateIsValid(howLongDrivingLicence))
+          setInvalidDrivingLicenceDate(true);
+
+        const mobileNumberInfo = data[4];
+        console.log(mobileNumberInfo);
+        setInvalidPostcode(!(await postcodeValidation.isValid({ postcode })));
+        console.log(
+          !(await mobileValidation.isValid({
+            mobileNumberInfo,
+          }))
+        );
+        setInvalidMobile(
+          !(await mobileValidation.isValid({
+            mobile: mobileNumberInfo,
+          }))
+        );
+
+        toast.error('You must fill each field before submitting.');
+        return;
       }
-      // if (anyEmptyField) {
-      //   toast.error('You must fill each field before submitting.');
-      //   return;
-      // }
+
+      const { forename, middlename, surname, mobile, email } = formData;
+
+      if (!(await emailValidation.isValid({ email }))) {
+        toast.error('You must provide a valid email address.');
+        setInvalidEmail(true);
+        return;
+      }
 
       if (!dateIsValid(dateOfBirth)) {
         toast.error('You must provide a valid Birthdate.');
+        setInvalidBirthDate(true);
         return;
       }
 
       if (!dateIsValid(howLongDrivingLicence)) {
         toast.error("Your Driving Licence's date is invalid.");
+        setInvalidDrivingLicenceDate(true);
         return;
       }
 
+      if (!(await postcodeValidation.isValid({ postcode }))) {
+        toast.error('You must provide a valid postcode.');
+        return;
+      }
+
+      if (
+        !(await mobileValidation.isValid({
+          mobile: data[4],
+        }))
+      ) {
+        setInvalidMobile(true);
+        toast.error('You must provide a valid mobile number.');
+        return;
+      }
+      console.log(forename);
+      console.log(middlename);
+      console.log(surname);
+      console.log(email);
+      console.log(mobile);
+      console.log(dateOfBirth);
+      console.log(age);
       console.log(anyUnspentConvention);
+      console.log(postcode);
       if (drivingLicenceOrigin === 'yes') console.log('uk');
       else console.log('eu');
+      console.log(howLongDrivingLicence);
       console.log(anyPointsInDrivingLicence);
       console.log(station);
-      console.log(dateOfBirth);
-      console.log(drivingLicenceOrigin);
-      console.log(howLongDrivingLicence);
       toast.success('Thanks for submitting your application.');
     },
     [
@@ -103,7 +183,13 @@ function App() {
       dateOfBirth,
       howLongDrivingLicence,
       station,
+      invalidFields,
       dateIsValid,
+      postcode,
+      emailValidation,
+      postcodeValidation,
+      mobileValidation,
+      age,
     ]
   );
 
@@ -164,12 +250,16 @@ function App() {
             <Input name="surname" title="Surname" error={invalidFields[2]} />
           </Line>
           <Line isDesktop={isDesktop}>
-            <Input name="email" title="Email" error={invalidFields[3]} />
+            <Input
+              name="email"
+              title="Email"
+              error={invalidEmail || invalidFields[3]}
+            />
             <InputMask
               title="Mobile Number"
               name="mobile"
               type="phone"
-              error={invalidFields[4]}
+              error={invalidMobile}
             />
             <DualInputContainer>
               <InputMask
@@ -179,16 +269,16 @@ function App() {
                 placeholder="MM/DD/YYYY"
                 onChange={e => setDateOfBirth(e.target.value)}
                 onBlur={calculateAge}
-                error={invalidFields[5]}
                 style={{ width: 134 }}
+                error={invalidBirthDate || invalidFields[5]}
               />
-              <InputMask
+              <Input
                 title="Age"
                 name="age"
-                type="code"
                 onChange={e => setAge(e.target.value)}
                 value={age}
                 disabled
+                placeholder="00"
                 style={{ width: 134 }}
               />
             </DualInputContainer>
@@ -232,7 +322,7 @@ function App() {
               placeholder="B11 3RP"
               value={postcode}
               onChange={e => setPostcode(e.target.value)}
-              error={invalidFields[6]}
+              error={invalidPostcode || invalidFields[6]}
             />
           </Line>
           <Line isDesktop={isDesktop}>
@@ -251,7 +341,7 @@ function App() {
               placeholder="MM/DD/YYYY"
               value={howLongDrivingLicence}
               onChange={e => setHowLongDrivingLicence(e.target.value)}
-              error={invalidFields[7]}
+              error={invalidDrivingLicenceDate || invalidFields[7]}
             />
             <RadioButton
               title="Any points in your Driving Licence?"
@@ -344,15 +434,33 @@ function App() {
               Weybridge (KT13 0YU)
             </RadioBox>
           </RadioBoxLine>
+          <Line
+            isDesktop={isDesktop}
+            style={{
+              alignItems: 'flex-start',
+              backgroundColor: '#0ff',
+              height: 74,
+            }}
+          >
+            <Recaptcha
+              sitekey="6Le9YcIZAAAAAGcPD_HYSCneUuPVv_0And9GiQk3"
+              render="explicit"
+              onloadCallback={() => {}}
+              verifyCallback={verifyCallback}
+            />
+          </Line>
           {isDesktop && (
             <Line
               isDesktop={isDesktop}
               style={{
                 alignItems: 'flex-start',
-                marginTop: 40,
+                marginTop: 20,
               }}
             >
-              <SubmitButton style={{ width: 288, height: 76 }} />
+              <SubmitButton
+                disabled={canSubmit}
+                style={{ width: 288, height: 76 }}
+              />
             </Line>
           )}
         </InputContainer>
@@ -362,11 +470,11 @@ function App() {
               width: '100%',
               height: 76,
               alignItems: 'flex-start',
-              marginTop: 40,
+              marginTop: 20,
             }}
           >
             <SubmitButton
-              disabled
+              disabled={canSubmit}
               style={
                 isDesktop
                   ? { width: 288, height: 76 }

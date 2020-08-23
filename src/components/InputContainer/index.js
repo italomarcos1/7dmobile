@@ -6,9 +6,10 @@ export default styled.div`
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
-  height: 1656px;
+  /* height: 1656px; */
+  height: 1730px;
   align-self: center;
   align-items: center;
   /* background-color: ${({ isDesktop }) => (isDesktop ? '#fff' : '#0f0')}; */
-  background-color: #fff;
+  /* background-color: #fff; */
 `;
