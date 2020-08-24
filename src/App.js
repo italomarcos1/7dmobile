@@ -3,7 +3,6 @@ import { useMediaQuery } from 'react-responsive';
 import { toast } from 'react-toastify';
 import { getMonth, getYear, isExists, formatDistanceStrict } from 'date-fns';
 import * as Yup from 'yup';
-import Recaptcha from 'react-recaptcha';
 
 import Container from './components/Container';
 import InputContainer from './components/InputContainer';
@@ -19,6 +18,7 @@ import RadioButtonContainer from './components/GreenRadioButtonContainer';
 import CustomRadioButton from './components/GreenRadioButton';
 import RadioBox from './components/RadioBox';
 import Subtitle from './components/Subtitle';
+import Switch from './components/Switch';
 
 function App() {
   const isDesktop = useMediaQuery({ query: '(min-device-width: 900px)' });
@@ -43,6 +43,7 @@ function App() {
   const [invalidEmail, setInvalidEmail] = useState(false);
   const [invalidPostcode, setInvalidPostcode] = useState(false);
   const [invalidMobile, setInvalidMobile] = useState(false);
+  const [checked, setChecked] = useState(false);
 
   const [invalidFields, setInvalidFields] = useState([
     false,
@@ -54,8 +55,6 @@ function App() {
     false,
     false,
   ]);
-
-  const [canSubmit, setCanSubmit] = useState('');
 
   const dateIsValid = useCallback(date => {
     const [month, day, year] = date.split('/');
@@ -86,12 +85,12 @@ function App() {
     email: Yup.string().required().email(),
   });
 
-  const verifyCallback = useCallback(response => {
-    if (response) setCanSubmit(true);
-  }, []);
-
   const handleSubmit = useCallback(
     async formData => {
+      if (!checked) {
+        toast.error("You must prove you're not a robot before submitting!");
+        return;
+      }
       const data = Object.values(formData);
       data.splice(6, 1);
       invalidFields.fill(false);
@@ -109,13 +108,8 @@ function App() {
           setInvalidDrivingLicenceDate(true);
 
         const mobileNumberInfo = data[4];
-        console.log(mobileNumberInfo);
         setInvalidPostcode(!(await postcodeValidation.isValid({ postcode })));
-        console.log(
-          !(await mobileValidation.isValid({
-            mobileNumberInfo,
-          }))
-        );
+
         setInvalidMobile(
           !(await mobileValidation.isValid({
             mobile: mobileNumberInfo,
@@ -177,6 +171,7 @@ function App() {
       toast.success('Thanks for submitting your application.');
     },
     [
+      checked,
       anyPointsInDrivingLicence,
       anyUnspentConvention,
       drivingLicenceOrigin,
@@ -436,16 +431,40 @@ function App() {
           </RadioBoxLine>
           <Line
             isDesktop={isDesktop}
-            style={{
-              alignItems: 'flex-start',
-              height: 74,
-            }}
+            style={
+              isDesktop
+                ? {
+                    alignItems: 'center',
+                    height: 37,
+                    backgroundColor: '#3f2',
+                    justifyContent: 'flex-start',
+                    padding: 0,
+                  }
+                : {
+                    alignItems: 'center',
+                    height: 57,
+                    marginTop: 0,
+                  }
+            }
           >
-            <Recaptcha
-              sitekey="6Le9YcIZAAAAAGcPD_HYSCneUuPVv_0And9GiQk3"
-              render="explicit"
-              onloadCallback={() => {}}
-              verifyCallback={verifyCallback}
+            <Subtitle
+              style={{
+                marginLeft: 0,
+                backgroundColor: '#042',
+                paddingLeft: 0,
+              }}
+            >
+              You must check before submitting (to prove you're not a robot).
+            </Subtitle>
+
+            <Switch
+              type="button"
+              onClick={() => {
+                console.log(`will set to ${!checked}`);
+                setChecked(!checked);
+              }}
+              checked={checked}
+              style={isDesktop ? { marginLeft: 20 } : {}}
             />
           </Line>
           {isDesktop && (
@@ -456,10 +475,7 @@ function App() {
                 marginTop: 20,
               }}
             >
-              <SubmitButton
-                disabled={canSubmit}
-                style={{ width: 288, height: 76 }}
-              />
+              <SubmitButton style={{ width: 288, height: 76 }} />
             </Line>
           )}
         </InputContainer>
@@ -473,7 +489,6 @@ function App() {
             }}
           >
             <SubmitButton
-              disabled={canSubmit}
               style={
                 isDesktop
                   ? { width: 288, height: 76 }
