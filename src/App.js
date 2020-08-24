@@ -438,7 +438,6 @@ function App() {
                 ? {
                     alignItems: 'center',
                     height: 37,
-                    backgroundColor: '#3f2',
                     justifyContent: 'flex-start',
                     padding: 0,
                   }
@@ -452,11 +451,11 @@ function App() {
             <Subtitle
               style={{
                 marginLeft: 0,
-                backgroundColor: '#042',
                 paddingLeft: 0,
               }}
             >
-              You must check before submitting (to prove you're not a robot).
+              You must check before submitting (to prove you&apos;re not a
+              robot).
             </Subtitle>
 
             <Switch
