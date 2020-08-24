@@ -8,6 +8,7 @@ export const Container = styled.button`
   display: flex;
   align-items: center;
   justify-content: ${({ checked }) => (checked ? 'flex-end' : 'flex-start')};
+  user-select: none;
 `;
 
 export const Button = styled.span`

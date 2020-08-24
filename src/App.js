@@ -327,7 +327,9 @@ function App() {
               firstOption="UK Driving Licence"
               secondOption="EU Driving Licence"
               setOption={value => setDrivingLicenceOrigin(value)}
-              style={{ width: 288 }}
+              style={
+                isDesktop ? { width: 288 } : { width: 288, marginBottom: 20 }
+              }
               column
             />
             <InputMask
@@ -442,7 +444,7 @@ function App() {
                   }
                 : {
                     alignItems: 'center',
-                    height: 57,
+                    height: 77,
                     marginTop: 0,
                   }
             }
