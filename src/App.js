@@ -581,10 +581,10 @@ function App() {
           </Line>
         )}
       </Container>
-      {hasEmptyInfo && (
+      {hasEmptyInfo && isDesktop && (
         <Modal isDesktop={isDesktop} onClick={() => setHasEmptyInfo(false)} />
       )}
-      {success && (
+      {success && isDesktop && (
         <FinishModal isDesktop={isDesktop} onClick={() => setSuccess(false)} />
       )}
     </>
