@@ -534,7 +534,7 @@ function App() {
                 : {
                     alignItems: 'center',
                     justifyContent: 'center',
-                    height: 87,
+                    height: 97,
                     marginTop: 0,
                     backgroundColor: '#f0f',
                   }
