@@ -191,27 +191,9 @@ function App() {
 
       const unspent_conviction = anyUnspentConvention === 'yes' ? '1' : '0';
       const licence_points = anyPointsInDrivingLicence === 'yes' ? '1' : '0';
-      try {
-        await axios.post('https://api.7daysservices.co.uk/recruitment', {
-          fore_name: forename,
-          middle_name: middlename,
-          sur_name: surname,
-          email,
-          mobile_phone: mobile,
-          birth: dateOfBirth,
-          age,
-          postcode,
-          unspent_conviction,
-          licence_location,
-          licence_register: howLongDrivingLicence,
-          licence_points, // casting
-          delivery_station: station,
-        });
-        // toast.success('Thanks for submitting your application.');
-        setSuccess(true);
-      } catch (error) {
-        toast.error('Something went wrong. Check your internet connection.');
-      }
+
+      // toast.success('Thanks for submitting your application.');
+      setSuccess(true);
     },
     [
       checked,
