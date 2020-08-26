@@ -203,6 +203,10 @@ function App() {
         );
 
         toast.error('You must fill each field before submitting.');
+        setInvalidForename(nameIsValid(forename));
+        setInvalidMiddlename(nameIsValid(middlename));
+        setInvalidSurname(nameIsValid(surname));
+        setInvalidEmail(await invalidEmailCheck(email));
         setHasEmptyInfo(true);
         return;
       }
