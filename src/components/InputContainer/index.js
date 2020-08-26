@@ -7,7 +7,7 @@ export default styled.div`
   flex-direction: column;
   justify-content: flex-start;
   /* height: 1656px; */
-  height: 1760px;
+  height: 1700px;
   align-self: center;
   align-items: center;
   /* background-color: ${({ isDesktop }) => (isDesktop ? '#fff' : '#0f0')}; */
