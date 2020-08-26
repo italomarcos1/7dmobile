@@ -535,6 +535,7 @@ function App() {
                     alignItems: 'center',
                     height: 77,
                     marginTop: 0,
+                    backgroundColor: '#f0f',
                   }
             }
           >
@@ -573,7 +574,6 @@ function App() {
               height: 76,
               alignItems: 'flex-start',
               marginTop: 20,
-              backgroundColor: '#f0f',
             }}
           >
             <SubmitButton
