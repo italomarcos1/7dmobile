@@ -553,7 +553,9 @@ function App() {
             <Switch
               onClick={() => setChecked(!checked)}
               checked={checked}
-              style={isDesktop ? { marginLeft: 20 } : { marginTop: 10 }}
+              style={
+                isDesktop ? { marginLeft: 20 } : { marginTop: 10, height: 31 }
+              }
             />
           </Line>
           {isDesktop && (
