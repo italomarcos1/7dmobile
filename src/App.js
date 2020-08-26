@@ -1,8 +1,8 @@
 import React, { useCallback, useState } from 'react';
 import { useMediaQuery } from 'react-responsive';
 import { toast } from 'react-toastify';
+import { getYear, getMonth, isExists, formatDistanceStrict } from 'date-fns';
 import * as Yup from 'yup';
-import axios from 'axios';
 
 import Container from './components/Container';
 import InputContainer from './components/InputContainer';
@@ -24,8 +24,7 @@ import FinishModal from './components/FinishModal';
 
 function App() {
   const isDesktop = useMediaQuery({ query: '(min-device-width: 900px)' });
-
-  // const { nameIsValid, dateIsValid, calculateAge } = useTab();
+  const nameValidation = new RegExp(/^\s+$/); // prettier-ignore
 
   const [anyPointsInDrivingLicence, setAnyPointsInDrivingLicence] = useState(
     'no'
@@ -76,6 +75,20 @@ function App() {
   const dateValidation = new RegExp(/^[0-9][0-9]\/[0-9][0-9]\/[0-9][0-9][0-9][0-9]+$/); // prettier-ignore
   const postcodeValid = new RegExp(/^[a-zA-Z][0-9][0-9]\s[0-9][a-zA-Z][a-zA-Z]$/); // prettier-ignore
 
+  const doesDateExists = date => {
+    const [day, month, year] = date.split('/');
+
+    const formattedMonth = Number(month) - 1;
+    const formattedDay = Number(day);
+    const formattedYear = Number(year);
+    const currentYear = getYear(new Date());
+
+    return (
+      isExists(formattedYear, formattedMonth, formattedDay) &&
+      currentYear > formattedYear
+    );
+  };
+
   const dateIsValid = useCallback(date => {
     return dateValidation.test(date);
   });
@@ -85,6 +98,7 @@ function App() {
       .matches(/^[a-zA-Z][0-9][0-9]\s[0-9][a-zA-Z][a-zA-Z]$/)
       .required(),
   });
+
   const mobileValidation = Yup.object().shape({
     mobile: Yup.string()
       .matches(/^[0-9][0-9][0-9][0-9][0-9]\s[0-9][0-9][0-9][0-9][0-9][0-9]$/)
@@ -118,6 +132,44 @@ function App() {
     setInvalidMobile(false);
     return false;
   }, [mobileValidation, mobile]);
+
+  function calculateAge(date) {
+    if (!doesDateExists(date)) {
+      return;
+    }
+
+    const [day, month, year] = date.split('/'); // captura dia, mês e ano da data informada e salva em variáveis separadas
+    const today = new Date().toString(); // captura a data atual e armazena como string
+    const currentDate = today.split(' '); // separa cada campo da data (dia, mês) em um array
+    const currentDay = currentDate[2]; // a data vem em um array e o dia eh o terceiro elemento do array. capturamos o dia
+    const currentMonth = getMonth(new Date()); // pega o mês da data atual
+    const formattedCurrentMonth = currentMonth + 1; // o date-fns diminui 1 numero do valor
+
+    const formattedDay = Number(day); // casting para numero, pois o dia vem como uma string
+    const formattedMonth = Number(month); // casting para numero, pois o mês vem como uma string
+
+    const currentAge = formatDistanceStrict(
+      Date.now(),
+      new Date(year, month, day)
+    ); // calculando a idade, comparando a data informada com o dia atual
+
+    const [formattedAge] = currentAge.split(' ');
+
+    // se o mês informado for maior que o mês atual, ou for o mesmo mês mas com dia maior, o usuário não fez aniversario ainda
+    if (
+      (currentDay < formattedDay && formattedMonth === formattedCurrentMonth) ||
+      formattedMonth > formattedCurrentMonth
+    ) {
+      return formattedAge - 1;
+    }
+
+    return formattedAge;
+  }
+  const nameIsValid =
+    (name => {
+      return nameValidation.test(name) || name === '';
+    },
+    [nameValidation]);
 
   const handleSubmit = useCallback(
     async formData => {
@@ -239,7 +291,7 @@ function App() {
               title="Forename"
               name="forename"
               value={forename}
-              onBlur={() => setInvalidForename(forename)}
+              onBlur={() => setInvalidForename(nameIsValid(forename))}
               onChange={e => setForename(e.target.value)}
               error={invalidForename}
               // value={forename}
@@ -248,7 +300,7 @@ function App() {
               title="Middle Name"
               name="middlename"
               value={middlename}
-              onBlur={() => setInvalidMiddlename(middlename)}
+              onBlur={() => setInvalidMiddlename(nameIsValid(middlename))}
               onChange={e => setMiddlename(e.target.value)}
               error={invalidMiddlename}
             />
@@ -256,7 +308,7 @@ function App() {
               title="Surname"
               name="surname"
               value={surname}
-              onBlur={() => setInvalidSurname(surname)}
+              onBlur={() => setInvalidSurname(nameIsValid(surname))}
               onChange={e => setSurname(e.target.value)}
               error={invalidSurname}
             />
@@ -289,7 +341,7 @@ function App() {
                 onBlur={() => {
                   if (dateIsValid(dateOfBirth)) {
                     setInvalidBirthDate(false);
-                    setAge(dateOfBirth);
+                    setAge(calculateAge(dateOfBirth));
                   } else setInvalidBirthDate(true);
                 }}
                 style={{ width: 134 }}
