@@ -536,7 +536,6 @@ function App() {
                     justifyContent: 'center',
                     height: 97,
                     marginTop: 0,
-                    backgroundColor: '#f0f',
                   }
             }
           >
