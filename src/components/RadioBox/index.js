@@ -6,7 +6,7 @@ import { Container, Button } from './styles';
 function RadioBox({ setValue, selected, style, children }) {
   return (
     <Container style={style}>
-      <Button onClick={setValue}>
+      <Button onClick={setValue} selected={selected}>
         <span style={selected ? { display: 'block' } : { display: 'none' }} />
       </Button>
       <small>{children}</small>

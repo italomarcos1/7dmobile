@@ -1,8 +1,8 @@
 import React, { useCallback, useState } from 'react';
 import { useMediaQuery } from 'react-responsive';
 import { toast } from 'react-toastify';
-import { getMonth, getYear, isExists, formatDistanceStrict } from 'date-fns';
 import * as Yup from 'yup';
+import axios from 'axios';
 
 import Container from './components/Container';
 import InputContainer from './components/InputContainer';
@@ -19,9 +19,13 @@ import CustomRadioButton from './components/GreenRadioButton';
 import RadioBox from './components/RadioBox';
 import Subtitle from './components/Subtitle';
 import Switch from './components/Switch';
+import Modal from './components/Modal';
+import FinishModal from './components/FinishModal';
 
 function App() {
   const isDesktop = useMediaQuery({ query: '(min-device-width: 900px)' });
+
+  // const { nameIsValid, dateIsValid, calculateAge } = useTab();
 
   const [anyPointsInDrivingLicence, setAnyPointsInDrivingLicence] = useState(
     'no'
@@ -34,16 +38,29 @@ function App() {
   const [dateOfBirth, setDateOfBirth] = useState('');
   const [postcode, setPostcode] = useState('');
 
+  const [forename, setForename] = useState('');
+  const [middlename, setMiddlename] = useState('');
+  const [surname, setSurname] = useState('');
+  const [mobile, setMobile] = useState('');
+
   const [age, setAge] = useState('');
-  const [station, setStation] = useState('basildon');
+  const [email, setEmail] = useState('');
+  const [station, setStation] = useState('Basildon (SS14 9AA)');
   const [invalidBirthDate, setInvalidBirthDate] = useState(false);
   const [invalidDrivingLicenceDate, setInvalidDrivingLicenceDate] = useState(
     false
   );
+
+  const [invalidForename, setInvalidForename] = useState('');
+  const [invalidMiddlename, setInvalidMiddlename] = useState('');
+  const [invalidSurname, setInvalidSurname] = useState('');
   const [invalidEmail, setInvalidEmail] = useState(false);
   const [invalidPostcode, setInvalidPostcode] = useState(false);
   const [invalidMobile, setInvalidMobile] = useState(false);
   const [checked, setChecked] = useState(false);
+
+  const [hasEmptyInfo, setHasEmptyInfo] = useState(false);
+  const [success, setSuccess] = useState(false);
 
   const [invalidFields, setInvalidFields] = useState([
     false,
@@ -56,19 +73,12 @@ function App() {
     false,
   ]);
 
+  const dateValidation = new RegExp(/^[0-9][0-9]\/[0-9][0-9]\/[0-9][0-9][0-9][0-9]+$/); // prettier-ignore
+  const postcodeValid = new RegExp(/^[a-zA-Z][0-9][0-9]\s[0-9][a-zA-Z][a-zA-Z]$/); // prettier-ignore
+
   const dateIsValid = useCallback(date => {
-    const [month, day, year] = date.split('/');
-
-    const formattedMonth = Number(month) - 1;
-    const formattedDay = Number(day);
-    const formattedYear = Number(year);
-    const currentYear = getYear(new Date());
-
-    return (
-      isExists(formattedYear, formattedMonth, formattedDay) &&
-      currentYear > formattedYear
-    );
-  }, []);
+    return dateValidation.test(date);
+  });
 
   const postcodeValidation = Yup.object().shape({
     postcode: Yup.string()
@@ -84,6 +94,30 @@ function App() {
   const emailValidation = Yup.object().shape({
     email: Yup.string().required().email(),
   });
+
+  const invalidEmailCheck = useCallback(async () => {
+    if (!(await emailValidation.isValid({ email }))) {
+      setInvalidEmail(true);
+      return true;
+    }
+
+    setInvalidEmail(false);
+    return false;
+  }, [emailValidation, email]);
+
+  const invalidMobileCheck = useCallback(async () => {
+    if (
+      !(await mobileValidation.isValid({
+        mobile,
+      }))
+    ) {
+      setInvalidMobile(true);
+      return true;
+    }
+
+    setInvalidMobile(false);
+    return false;
+  }, [mobileValidation, mobile]);
 
   const handleSubmit = useCallback(
     async formData => {
@@ -117,26 +151,22 @@ function App() {
         );
 
         toast.error('You must fill each field before submitting.');
+        setHasEmptyInfo(true);
         return;
       }
 
-      const { forename, middlename, surname, mobile, email } = formData;
-
-      if (!(await emailValidation.isValid({ email }))) {
+      if (await invalidEmailCheck(email)) {
         toast.error('You must provide a valid email address.');
         setInvalidEmail(true);
         return;
       }
-      if (
-        !(await mobileValidation.isValid({
-          mobile: data[4],
-        }))
-      ) {
-        setInvalidMobile(true);
+
+      if (await invalidMobileCheck(mobile)) {
         toast.error('You must provide a valid mobile number.');
+        setInvalidMobile(true);
+
         return;
       }
-
       if (!dateIsValid(dateOfBirth)) {
         toast.error('You must provide a valid Birthdate.');
         setInvalidBirthDate(true);
@@ -154,21 +184,34 @@ function App() {
         return;
       }
 
-      console.log(forename);
-      console.log(middlename);
-      console.log(surname);
-      console.log(email);
-      console.log(mobile);
-      console.log(dateOfBirth);
-      console.log(age);
-      console.log(anyUnspentConvention);
-      console.log(postcode);
-      if (drivingLicenceOrigin === 'yes') console.log('uk');
-      else console.log('eu');
-      console.log(howLongDrivingLicence);
-      console.log(anyPointsInDrivingLicence);
-      console.log(station);
-      toast.success('Thanks for submitting your application.');
+      const licence_location =
+        drivingLicenceOrigin === 'yes'
+          ? 'UK Driving Licence'
+          : 'EU Driving Licence';
+
+      const unspent_conviction = anyUnspentConvention === 'yes' ? '1' : '0';
+      const licence_points = anyPointsInDrivingLicence === 'yes' ? '1' : '0';
+      try {
+        await axios.post('https://api.7daysservices.co.uk/recruitment', {
+          fore_name: forename,
+          middle_name: middlename,
+          sur_name: surname,
+          email,
+          mobile_phone: mobile,
+          birth: dateOfBirth,
+          age,
+          postcode,
+          unspent_conviction,
+          licence_location,
+          licence_register: howLongDrivingLicence,
+          licence_points, // casting
+          delivery_station: station,
+        });
+        // toast.success('Thanks for submitting your application.');
+        setSuccess(true);
+      } catch (error) {
+        toast.error('Something went wrong. Check your internet connection.');
+      }
     },
     [
       checked,
@@ -181,45 +224,18 @@ function App() {
       invalidFields,
       dateIsValid,
       postcode,
-      emailValidation,
       postcodeValidation,
       mobileValidation,
       age,
+      email,
+      invalidEmailCheck,
+      invalidMobileCheck,
+      forename,
+      middlename,
+      surname,
+      mobile,
     ]
   );
-
-  const calculateAge = useCallback(() => {
-    if (!dateIsValid(dateOfBirth)) {
-      return;
-    }
-
-    const [month, day, year] = dateOfBirth.split('/'); // captura dia, mês e ano da data informada e salva em variáveis separadas
-    const today = new Date().toString(); // captura a data atual e armazena como string
-    const currentDate = today.split(' '); // separa cada campo da data (dia, mês) em um array
-    const currentDay = currentDate[2]; // a data vem em um array e o dia eh o terceiro elemento do array. capturamos o dia
-    const currentMonth = getMonth(new Date()); // pega o mês da data atual
-    const formattedCurrentMonth = currentMonth + 1; // o date-fns diminui 1 numero do valor
-
-    const formattedDay = Number(day); // casting para numero, pois o dia vem como uma string
-    const formattedMonth = Number(month); // casting para numero, pois o mês vem como uma string
-
-    const currentAge = formatDistanceStrict(
-      Date.now(),
-      new Date(year, month, day)
-    ); // calculando a idade, comparando a data informada com o dia atual
-
-    const [formattedAge] = currentAge.split(' ');
-
-    // se o mês informado for maior que o mês atual, ou for o mesmo mês mas com dia maior, o usuário não fez aniversario ainda
-    if (
-      (currentDay < formattedDay && formattedMonth === formattedCurrentMonth) ||
-      formattedMonth > formattedCurrentMonth
-    ) {
-      setAge(formattedAge - 1);
-    } else {
-      setAge(formattedAge);
-    }
-  }, [dateOfBirth, dateIsValid]);
 
   // Line: 262 = 74 + 74 + 74 + 20 + 20
   // 1048 - 4 lines
@@ -229,6 +245,7 @@ function App() {
   // SubmitButton: 116
 
   // Total: 1656
+  console.log('uauai');
 
   return (
     <>
@@ -236,24 +253,48 @@ function App() {
       <Container onSubmit={handleSubmit} isDesktop={isDesktop}>
         <InputContainer>
           <Line style={{ marginTop: 0 }} isDesktop={isDesktop}>
-            <Input name="forename" title="Forename" error={invalidFields[0]} />
             <Input
-              name="middlename"
-              title="Middle Name"
-              error={invalidFields[1]}
+              title="Forename"
+              name="forename"
+              value={forename}
+              onBlur={() => setInvalidForename(forename)}
+              onChange={e => setForename(e.target.value)}
+              error={invalidForename}
+              // value={forename}
             />
-            <Input name="surname" title="Surname" error={invalidFields[2]} />
+            <Input
+              title="Middle Name"
+              name="middlename"
+              value={middlename}
+              onBlur={() => setInvalidMiddlename(middlename)}
+              onChange={e => setMiddlename(e.target.value)}
+              error={invalidMiddlename}
+            />
+            <Input
+              title="Surname"
+              name="surname"
+              value={surname}
+              onBlur={() => setInvalidSurname(surname)}
+              onChange={e => setSurname(e.target.value)}
+              error={invalidSurname}
+            />
           </Line>
           <Line isDesktop={isDesktop}>
             <Input
-              name="email"
               title="Email"
-              error={invalidEmail || invalidFields[3]}
+              name="email"
+              onBlur={() => invalidEmailCheck(email)}
+              value={email}
+              onChange={e => setEmail(e.target.value)}
+              error={invalidEmail}
             />
             <InputMask
               title="Mobile Number"
               name="mobile"
               type="phone"
+              onBlur={() => invalidMobileCheck(mobile)}
+              value={mobile}
+              onChange={e => setMobile(e.target.value)}
               error={invalidMobile}
             />
             <DualInputContainer>
@@ -261,11 +302,16 @@ function App() {
                 title="Date of Birth"
                 name="dateOfBirth"
                 value={dateOfBirth}
-                placeholder="MM/DD/YYYY"
+                placeholder="DD/MM/YYYY"
                 onChange={e => setDateOfBirth(e.target.value)}
-                onBlur={calculateAge}
+                onBlur={() => {
+                  if (dateIsValid(dateOfBirth)) {
+                    setInvalidBirthDate(false);
+                    setAge(dateOfBirth);
+                  } else setInvalidBirthDate(true);
+                }}
                 style={{ width: 134 }}
-                error={invalidBirthDate || invalidFields[5]}
+                error={invalidBirthDate}
               />
               <Input
                 title="Age"
@@ -315,9 +361,10 @@ function App() {
               name="postcode"
               mask="a99 9aa"
               placeholder="B11 3RP"
+              onBlur={() => setInvalidPostcode(!postcodeValid.test(postcode))}
               value={postcode}
               onChange={e => setPostcode(e.target.value)}
-              error={invalidPostcode || invalidFields[6]}
+              error={invalidPostcode}
             />
           </Line>
           <Line isDesktop={isDesktop}>
@@ -335,10 +382,15 @@ function App() {
             <InputMask
               title="How Long you had your Driving Licence for?"
               name="howLongDrivingLicence"
-              placeholder="MM/DD/YYYY"
               value={howLongDrivingLicence}
+              placeholder="DD/MM/YYYY"
               onChange={e => setHowLongDrivingLicence(e.target.value)}
-              error={invalidDrivingLicenceDate || invalidFields[7]}
+              onBlur={() =>
+                setInvalidDrivingLicenceDate(
+                  !dateIsValid(howLongDrivingLicence)
+                )
+              }
+              error={invalidDrivingLicenceDate}
             />
             <RadioButton
               title="Any points in your Driving Licence?"
@@ -373,14 +425,14 @@ function App() {
 
           <RadioBoxLine isDesktop={isDesktop}>
             <RadioBox
-              setValue={() => setStation('basildon')}
-              selected={station === 'basildon'}
+              setValue={() => setStation('Basildon (SS14 9AA)')}
+              selected={station === 'Basildon (SS14 9AA)'}
             >
               Basildon (SS14 9AA)
             </RadioBox>
             <RadioBox
-              setValue={() => setStation('newHythe')}
-              selected={station === 'newHythe'}
+              setValue={() => setStation('New Hythe (ME20 7PA)')}
+              selected={station === 'New Hythe (ME20 7PA)'}
               style={isDesktop ? { marginLeft: 20 } : { marginLeft: 0 }}
             >
               New Hythe (ME20 7PA)
@@ -388,14 +440,14 @@ function App() {
           </RadioBoxLine>
           <RadioBoxLine isDesktop={isDesktop}>
             <RadioBox
-              setValue={() => setStation('croydon')}
-              selected={station === 'croydon'}
+              setValue={() => setStation('Croydon (CR0 4BD)')}
+              selected={station === 'Croydon (CR0 4BD)'}
             >
               Croydon (CR0 4BD)
             </RadioBox>
             <RadioBox
-              setValue={() => setStation('grays')}
-              selected={station === 'grays'}
+              setValue={() => setStation('Grays (RM20 3ED)')}
+              selected={station === 'Grays (RM20 3ED)'}
               style={isDesktop ? { marginLeft: 20 } : { marginLeft: 0 }}
             >
               Grays (RM20 3ED)
@@ -403,14 +455,14 @@ function App() {
           </RadioBoxLine>
           <RadioBoxLine isDesktop={isDesktop}>
             <RadioBox
-              setValue={() => setStation('croydon2')}
-              selected={station === 'croydon2'}
+              setValue={() => setStation('Croydon 2 (CR0 4XL)')}
+              selected={station === 'Croydon 2 (CR0 4XL)'}
             >
               Croydon 2 (CR0 4XL)
             </RadioBox>
             <RadioBox
-              setValue={() => setStation('wembley')}
-              selected={station === 'wembley'}
+              setValue={() => setStation('Wembley (NW10 OUX)')}
+              selected={station === 'Wembley (NW10 OUX)'}
               style={isDesktop ? { marginLeft: 20 } : { marginLeft: 0 }}
             >
               Wembley (NW10 OUX)
@@ -418,14 +470,14 @@ function App() {
           </RadioBoxLine>
           <RadioBoxLine isDesktop={isDesktop}>
             <RadioBox
-              setValue={() => setStation('belvedere')}
-              selected={station === 'belvedere'}
+              setValue={() => setStation('Belvedere (DA17 6AS)')}
+              selected={station === 'Belvedere (DA17 6AS)'}
             >
               Belvedere (DA17 6AS)
             </RadioBox>
             <RadioBox
-              setValue={() => setStation('weybridge')}
-              selected={station === 'weybridge'}
+              setValue={() => setStation('Weybridge (KT13 0YU)')}
+              selected={station === 'Weybridge (KT13 0YU)'}
               style={isDesktop ? { marginLeft: 20 } : { marginLeft: 0 }}
             >
               Weybridge (KT13 0YU)
@@ -437,7 +489,7 @@ function App() {
               isDesktop
                 ? {
                     alignItems: 'center',
-                    height: 37,
+                    height: 77,
                     justifyContent: 'flex-start',
                     padding: 0,
                   }
@@ -459,11 +511,7 @@ function App() {
             </Subtitle>
 
             <Switch
-              type="button"
-              onClick={() => {
-                console.log(`will set to ${!checked}`);
-                setChecked(!checked);
-              }}
+              onClick={() => setChecked(!checked)}
               checked={checked}
               style={isDesktop ? { marginLeft: 20 } : {}}
             />
@@ -499,6 +547,12 @@ function App() {
           </Line>
         )}
       </Container>
+      {hasEmptyInfo && (
+        <Modal isDesktop={isDesktop} onClick={() => setHasEmptyInfo(false)} />
+      )}
+      {success && (
+        <FinishModal isDesktop={isDesktop} onClick={() => setSuccess(false)} />
+      )}
     </>
   );
 }

@@ -20,6 +20,7 @@ export const Button = styled.div`
   width: 14px;
   height: 14px;
   border: 1px solid #333;
+  border-style: ${({ selected }) => (selected ? 'none' : 'solid')};
   border-radius: 50%;
   display: flex;
   align-items: center;

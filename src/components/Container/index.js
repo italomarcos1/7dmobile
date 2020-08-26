@@ -12,4 +12,5 @@ export default styled(Form)`
   flex-direction: column;
   align-items: center;
   justify-content: space-between;
+  position: relative;
 `;
