@@ -533,6 +533,7 @@ function App() {
                   }
                 : {
                     alignItems: 'center',
+                    justifyContent: 'center',
                     height: 77,
                     marginTop: 0,
                     backgroundColor: '#f0f',
@@ -552,7 +553,7 @@ function App() {
             <Switch
               onClick={() => setChecked(!checked)}
               checked={checked}
-              style={isDesktop ? { marginLeft: 20 } : {}}
+              style={isDesktop ? { marginLeft: 20 } : { marginTop: 10 }}
             />
           </Line>
           {isDesktop && (
