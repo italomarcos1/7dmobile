@@ -8,7 +8,7 @@ export default styled(Form)`
   border-radius: 4px;
   width: 100%;
   /* height: ${({ isDesktop }) => (isDesktop ? '100%' : '1656px')}; */
-  height: ${({ isDesktop }) => (isDesktop ? '100%' : '1730px')};
+  height: ${({ isDesktop }) => (isDesktop ? '100%' : '1760px')};
   flex-direction: column;
   align-items: center;
   justify-content: space-between;
