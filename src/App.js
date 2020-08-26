@@ -569,6 +569,7 @@ function App() {
               height: 76,
               alignItems: 'flex-start',
               marginTop: 20,
+              backgroundColor: '#f0f',
             }}
           >
             <SubmitButton
